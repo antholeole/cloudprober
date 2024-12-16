@@ -42,7 +42,7 @@ import (
 	"github.com/cloudprober/cloudprober/metrics/payload"
 	payloadpb "github.com/cloudprober/cloudprober/metrics/payload/proto"
 	"github.com/cloudprober/cloudprober/probes/common/command"
-	configpb "github.com/cloudprober/cloudprober/probes/external/proto"
+	configpb "github.com/cloudprober/cloudprober/probes/external/config/proto"
 	serverpb "github.com/cloudprober/cloudprober/probes/external/proto"
 	"github.com/cloudprober/cloudprober/probes/options"
 	"github.com/cloudprober/cloudprober/targets/endpoint"
