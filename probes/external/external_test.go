@@ -761,6 +761,10 @@ func TestMain(m *testing.M) {
 	os.Exit(status)
 }
 
+func TestStderr(t *testing.T) {
+
+}
+
 func TestProbeInit(t *testing.T) {
 	var tests = []struct {
 		name      string

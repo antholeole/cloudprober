@@ -29,6 +29,7 @@ import (
 	"log/slog"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/cloudprober/cloudprober/logger"
 )
@@ -87,12 +88,21 @@ func (c *Command) setupStreaming(cmd *exec.Cmd, l *logger.Logger) error {
 		defer stderrR.Close()
 		scanner := bufio.NewScanner(stderrR)
 
+		// slog overwrites the key if written to multiple times, so we should buffer
+		//internally and then write to slog when we complete.
+		var slogStderrBuilder strings.Builder
+
 		buf := make([]byte, 0, bufio.MaxScanTokenSize)
 		scanner.Buffer(buf, maxScannerTokenSize)
 
+		defer func() {
+			l.WarningAttrs("process stderr", slog.String("process_stderr", slogStderrBuilder.String()), slog.String("process_path", c.CmdLine[0]))
+		}()
+
 		for scanner.Scan() {
-			l.WarningAttrs("process stderr", slog.String("process_stderr", scanner.Text()), slog.String("process_path", c.CmdLine[0]))
+			slogStderrBuilder.WriteString(scanner.Text())
 		}
+
 		if err := scanner.Err(); err != nil && !isPipeOrFileClosedError(err) {
 			l.ErrorAttrs(fmt.Sprintf("Error reading from stderr: %v", err), slog.String("process_path", c.CmdLine[0]))
 		}
